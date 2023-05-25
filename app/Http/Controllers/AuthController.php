@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EmailVerification\SendEmailVerificationRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Mail\ConfirmationEmail;
+use App\Mail\VerifyEmail;
 use App\Models\User;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
 
@@ -19,17 +19,21 @@ class AuthController extends Controller
 		$user = User::create($validatedData);
 		$token = $user->createToken('token-name')->plainTextToken;
 
-		$confirmationLink = url('/confirm-email/' . $user->id);
-		Mail::to($user->email)->send(new ConfirmationEmail($user, $confirmationLink));
+		Mail::to($user->email)->send(new VerifyEmail($user));
 
-		return response()->json(['token' => $token], 201);
+		return response()->json('user created successfully', 200);
 	}
 
-	public function confirmEmail(User $user): View
+	public function sendVerificationEmail(SendEmailVerificationRequest  $request): JsonResponse
 	{
-		$user->email_verified_at = now();
-		$user->save();
+		$user = User::where('email', $request['email'])->first();
 
-		return view('email.activated-account');
+		if (!$user) {
+			return response()->json(['error' => 'User does not exist !'], 401);
+		}
+
+		Mail::to($user->email)->send(new VerifyEmail($user));
+
+		return response()->json('email sent');
 	}
 }
