@@ -1,0 +1,25 @@
+components:
+  responses:
+    register:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: string
+              example: "Successfully registered"
+      "422":
+        description: Unprocessable content
+        content:
+          application/json:
+            schema:
+              type: json
+              example:
+                {
+                  "message": "The username name must be at least 3 characters. (and 1 more error)",
+                  "errors":
+                    {
+                      "username": ["The username has already been taken"],
+                      "email": ["The email has already been taken"],
+                    },
+                }
