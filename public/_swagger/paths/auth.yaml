@@ -1,0 +1,36 @@
+paths:
+  /register:
+    post: 
+      tags: 
+        - User
+      summary: Returns response for registration
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: beqa
+                  minLength: 3
+                email: 
+                  type: email 
+                  example: beqa@gmail.com
+                  minLength: 3
+                password: 
+                  type: password 
+                  example: beqa1234
+                  minLength: 8
+                  maxLength: 15
+                password_confirmation: 
+                  type: password 
+                  example: beqa1234
+                  minLength: 8
+                  maxLength: 15        
+      responses:
+        "200": 
+          $ref: "../responses/auth.yaml#/components/responses/register/200"
+        "422": 
+          $ref: "../responses/auth.yaml#/components/responses/register/422"
