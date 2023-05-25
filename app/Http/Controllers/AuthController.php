@@ -11,25 +11,25 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request): JsonResponse
-    {
-        $validatedData = $request->validated();
-        unset($validatedData['password_confirmation']);
+	public function register(RegisterRequest $request): JsonResponse
+	{
+		$validatedData = $request->validated();
+		unset($validatedData['password_confirmation']);
 
-        $user = User::create($validatedData);
-        $token = $user->createToken('token-name')->plainTextToken;
+		$user = User::create($validatedData);
+		$token = $user->createToken('token-name')->plainTextToken;
 
-        $confirmationLink = url('/confirm-email/' . $user->id);
-        Mail::to($user->email)->send(new ConfirmationEmail($user, $confirmationLink));
+		$confirmationLink = url('/confirm-email/' . $user->id);
+		Mail::to($user->email)->send(new ConfirmationEmail($user, $confirmationLink));
 
-        return response()->json(['token' => $token], 201);
-    }
+		return response()->json(['token' => $token], 201);
+	}
 
-    public function confirmEmail(User $user): View
-    {
-        $user->email_verified_at = now();
-        $user->save();
+	public function confirmEmail(User $user): View
+	{
+		$user->email_verified_at = now();
+		$user->save();
 
-        return view('email.activated-account');
-    }
+		return view('email.activated-account');
+	}
 }
