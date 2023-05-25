@@ -8,23 +8,25 @@ use App\Mail\VerifyEmail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
 	public function register(RegisterRequest $request): JsonResponse
 	{
-		$validatedData = $request->validated();
-		unset($validatedData['password_confirmation']);
-
-		$user = User::create($validatedData);
-		$token = $user->createToken('token-name')->plainTextToken;
+		$user = User::create([
+			'name'     => $request['name'],
+			'email'    => $request['email'],
+			'password' => $request['password'],
+			'token'    => Str::random(64),
+		]);
 
 		Mail::to($user->email)->send(new VerifyEmail($user));
 
 		return response()->json('user created successfully', 200);
 	}
 
-	public function sendVerificationEmail(SendEmailVerificationRequest  $request): JsonResponse
+	public function sendVerificationEmail(SendEmailVerificationRequest $request): JsonResponse
 	{
 		$user = User::where('email', $request['email'])->first();
 
@@ -33,7 +35,6 @@ class AuthController extends Controller
 		}
 
 		Mail::to($user->email)->send(new VerifyEmail($user));
-
 		return response()->json('email sent');
 	}
 }
