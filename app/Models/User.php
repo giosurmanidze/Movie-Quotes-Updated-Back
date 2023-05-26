@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
-use App\Notifications\EmailVerifyNotification;
+use App\Notifications\VerifyEmail;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
 	use HasApiTokens;
 
@@ -37,7 +37,7 @@ class User extends Authenticatable
 
 	public function sendEmailVerificationNotification()
 	{
-		$this->notify(new EmailVerifyNotification());
+		$this->notify(new VerifyEmail());
 	}
 
 	/**

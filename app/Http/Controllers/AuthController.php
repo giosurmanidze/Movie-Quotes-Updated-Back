@@ -2,39 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EmailVerification\SendEmailVerificationRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Mail\VerifyEmail;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Events\Verified;
 
 class AuthController extends Controller
 {
 	public function register(RegisterRequest $request): JsonResponse
 	{
-		$user = User::create([
-			'name'     => $request['name'],
-			'email'    => $request['email'],
-			'password' => $request['password'],
-			'token'    => Str::random(64),
-		]);
-
-		Mail::to($user->email)->send(new VerifyEmail($user));
-
-		return response()->json('user created successfully', 200);
+		$user = User::create($request->validated());
+		event(new Registered($user));
+		return response()->json('success', 200);
 	}
 
-	public function sendVerificationEmail(SendEmailVerificationRequest $request): JsonResponse
+	public function verify(Request $request): RedirectResponse
 	{
-		$user = User::where('email', $request['email'])->first();
+		$user = User::findOrFail($request->route('id'));
 
-		if (!$user) {
-			return response()->json(['error' => 'User does not exist !'], 401);
+		if (!$user->hasVerifiedEmail()) {
+			if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+				throw new AuthorizationException();
+			}
+
+			$user->markEmailAsVerified();
+			event(new Verified($user));
 		}
 
-		Mail::to($user->email)->send(new VerifyEmail($user));
-		return response()->json('email sent');
+		return redirect(env('FRONT_BASE_URL') . '/success');
 	}
 }
