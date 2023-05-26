@@ -3,8 +3,7 @@
         <table style="align-items: center; text-align: center; width: 100%">
             <tr>
                 <td style="align-items: center; text-align: center">
-                    {{-- <img src="{{ $message->embed(public_path('/images/quote-icon.png')) }}" title="Quote Icon" --}}
-                        width="22px" height="22px" alt="not found" />
+                    <img src="{{ $message->embed(public_path('images/bi_chat-quote-fill.svg')) }}" title="Quote Icon" />
                     <p style="color: #DDCCAA">MOVIE QUOTES</p>
                 </td>
             </tr>
@@ -13,7 +12,7 @@
         <br />
         <table>
             <tr>
-                <td style="color: white">Holla {{ $user->username }}!</td>
+                <td style="color: white">Holla {{ $name }}!</td>
             </tr>
             <br />
             <tr>
@@ -27,7 +26,7 @@
             <br />
             <tr>
                 <td>
-                    <a href="{{ env('FRONT_APP') }}/email/{{ $user->token }}"
+                    <a href="{{ $url }}"
                         style="text-decoration: none; padding: 10px; border-radius: 6px;  color: white; background-color: #E31221;">
                         Verify account
                     </a>
@@ -45,7 +44,7 @@
             <br />
             <tr>
                 <td>
-                    <a style="color: #DDCCAA">{{ env('FRONT_APP') }}/email/{{ $user->token }}</a>
+                    {{ $url }}
                 </td>
             </tr>
             <br />

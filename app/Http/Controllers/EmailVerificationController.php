@@ -11,7 +11,6 @@ class EmailVerificationController extends Controller
 	public function verifyUser($token): JsonResponse
 	{
 		$user = User::where('token', $token)->first();
-
 		$user->markEmailAsVerified();
 
 		return response()->json('Email verified successfully !');
