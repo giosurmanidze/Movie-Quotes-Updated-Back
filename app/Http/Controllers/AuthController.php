@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\Verified;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -41,17 +41,30 @@ class AuthController extends Controller
 		return redirect(env('FRONT_BASE_URL') . '/success');
 	}
 
-	public function login(LoginRequest $request): JsonResponse
-	{
-		$credentials = $request->validated();
-	
-		if (!Auth::attempt($credentials)) {
-			return response()->json(['message' => 'Invalid credentials'], 401);
-		}
-	
-		$user = User::where('email', $request->email)->firstOrFail();
-		$token = $user->createToken('auth_token')->plainTextToken;
-	
-		return response()->json(['token' => $token], 200);
+	public function login(LoginRequest $request)
+{
+	$validated = $request->validated();
+
+	$username = $validated['name'];
+	$password = $validated['password'];
+
+
+	if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
+		$user = User::where('email', $username)->first();
+	} else {
+		$user = User::where('name', $username)->first();
 	}
+
+    if ($user && Hash::check($password, $user->password)) {
+        if ($user->hasVerifiedEmail()) {
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json(['token' => $token], 200);
+        } else {
+            return response()->json(['error' => 'Email not verified'], 401);
+        }
+    }
+
+    return response()->json(['error' => 'Invalid credentials'], 401);
+}
 }

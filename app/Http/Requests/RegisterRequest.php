@@ -14,10 +14,24 @@ class RegisterRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name'                  => 'required|min:3|max:15|unique:users',
-			'email'                 => 'required|email|unique:users',
-			'password'              => 'required|min:8|max:15|confirmed',
-			'password_confirmation' => 'required',
+			'username'                  => 'required|min:3|max:15|unique:users',
+			'email'                     => 'required|email|unique:users',
+			'password'                  => 'required|min:8|max:15|confirmed',
+			'password_confirmation'     => 'required',
+		];
+	}
+
+	public function messages()
+	{
+		return [
+			'username.unique' => [
+				'ka' => __('validation.unique', ['attribute' => 'სახელი'], 'ka'),
+				'en' => __('validation.unique', ['attribute' => 'username'], 'en'),
+			],
+			'email.unique' => [
+				'en' => __('validation.unique', ['attribute' => 'email'], 'en'),
+				'ka' => __('validation.unique', ['attribute' => 'იმეილი'], 'ka'),
+			],
 		];
 	}
 }
