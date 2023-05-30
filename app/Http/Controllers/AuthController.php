@@ -42,31 +42,27 @@ class AuthController extends Controller
 	public function login(LoginRequest $request): JsonResponse
 	{
 		$validated = $request->validated();
-
 		$username = $validated['username'];
 		$password = $validated['password'];
 
-		if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
-			$user = User::where('email', $username)->first();
-		} else {
-			$user = User::where('username', $username)->first();
-		}
-		if (!$user) {
-			return back()->withInput($request->only('username'))->withErrors(['username' => trans('user_not_found')]);
-		}
-		if (!$user->email_verified_at || !password_verify($password, $user->password)) {
-			return back()->withInput($request->only('username'))->withErrors(['password' => trans('user_password_incorrect')])->withErrors(['username' => trans('is_incorrect_input')]);
-		}
+		$user = User::where(function ($query) use ($username) {
+			$query->where('email', $username)->orWhere('username', $username);
+		})->first();
 
-		$credentials = [
-			'username'    => $user,
-			'password'    => $password,
-		];
-
-		Auth::guard('web')->attempt($credentials);
+		if (!$user || !$user->email_verified_at || !password_verify($password, $user->password)) {
+			return back()->withInput($request->only('username'))->withErrors([
+				'password' => trans('user_password_incorrect'),
+				'username' => trans('is_incorrect_input'),
+			]);
+		}
+		Auth::guard('web')->attempt(['username' => $username, 'password' => $password]);
 
 		session()->regenerate();
-
 		return response()->json('success!');
+	}
+
+	public function getUser(Request $request)
+	{
+		return $request->user();
 	}
 }
