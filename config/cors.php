@@ -14,7 +14,10 @@ return [
 	|
 	*/
 
-	'paths'                    => ['api/*'],
+	'paths' => [
+		'api/*',
+		'/sanctum/csrf-cookie',
+	],
 	'allowed_methods'          => ['*'],
 	'allowed_origins'          => [env('FRONT_BASE_URL')],
 	'allowed_origins_patterns' => [],
