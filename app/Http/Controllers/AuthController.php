@@ -19,9 +19,7 @@ class AuthController extends Controller
 	{
 		$user = User::create($request->validated());
 		event(new Registered($user));
-		$token = $user->createToken('auth_token')->plainTextToken;
-
-		return response()->json(['token' => $token], 201);
+		return response()->json(['msg' => 'success registered!']);
 	}
 
 	public function verify(Request $request): RedirectResponse
@@ -45,20 +43,28 @@ class AuthController extends Controller
 		$username = $validated['username'];
 		$password = $validated['password'];
 
-		$user = User::where(function ($query) use ($username) {
-			$query->where('email', $username)->orWhere('username', $username);
-		})->first();
+		$credentials = [
+			'password' => $password,
+		];
 
-		if (!$user || !$user->email_verified_at || !password_verify($password, $user->password)) {
-			return back()->withInput($request->only('username'))->withErrors([
+		if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
+			$credentials['email'] = $username;
+		} else {
+			$credentials['username'] = $username;
+		}
+
+		return Auth::guard('web')->attempt($credentials) ?
+			(
+				auth()->user()->email_verified_at ?
+				response()->json('success!') :
+				auth()->logout() && back()->withInput($request->only('username'))->withErrors([
+					'username' => trans('email_not_verified'),
+				])
+			) :
+			back()->withInput($request->only('username'))->withErrors([
 				'password' => trans('user_password_incorrect'),
 				'username' => trans('is_incorrect_input'),
 			]);
-		}
-		Auth::guard('web')->attempt(['username' => $username, 'password' => $password]);
-
-		session()->regenerate();
-		return response()->json('success!');
 	}
 
 	public function getUser(Request $request)
@@ -66,11 +72,12 @@ class AuthController extends Controller
 		return $request->user();
 	}
 
-	public function destroy()
+	public function logout(Request $request)
 	{
+		$request->session()->invalidate();
+		$request->session()->regenerateToken();
 		Auth::guard('web')->logout();
-		request()->session()->invalidate();
-		request()->session()->regenerateToken();
+
 		return response()->json(['message' => 'You are logged out']);
 	}
 }

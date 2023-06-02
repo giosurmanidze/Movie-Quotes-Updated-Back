@@ -27,7 +27,6 @@ class User extends Authenticatable implements MustVerifyEmail
 		'username',
 		'email',
 		'password',
-		'token',
 	];
 
 	public function setPasswordAttribute($value)
