@@ -9,5 +9,5 @@ Route::controller(AuthController::class)->group(function () {
 	Route::post('register', 'register')->name('register');
 	Route::post('login', 'login')->name('login');
 	Route::get('/email/verify/{id}/{hash}', 'verify')->name('verification.verify');
-	Route::post('/logout', [AuthController::class, 'destroy']);
+	Route::post('logout', 'logout')->name('logout');
 });
