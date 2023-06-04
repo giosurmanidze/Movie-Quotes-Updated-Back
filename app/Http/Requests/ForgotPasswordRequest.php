@@ -22,8 +22,8 @@ class ForgotPasswordRequest extends FormRequest
 	{
 		return [
 			'email.exists' => [
-				'ka' => __('passwords.user', ['attribute' => 'სახელი'], 'ka'),
-				'en' => __('passwords.user', ['attribute' => 'name'], 'en'),
+				'ka' => __('validation.exists', ['attribute' => 'მეილით'], 'ka'),
+				'en' => __('validation.exists', ['attribute' => 'email'], 'en'),
 			],
 		];
 	}
