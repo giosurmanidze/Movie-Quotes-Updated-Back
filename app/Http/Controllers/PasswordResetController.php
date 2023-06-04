@@ -2,44 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ResetPasswordRequest;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Http\Requests\UpdatePasswordRequest;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Password;
 
-class ResetPasswordController extends Controller
+class PasswordResetController extends Controller
 {
-	public function showResetForm(Request $request, $token = null): View
+	public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
 	{
-		return view('auth.reset-password', ['request' => $request, 'token' => $token]);
+		$status = Password::sendResetLink($request->only('email'));
+		$response = $status === Password::RESET_LINK_SENT ? 'Password reset email sent!' : __($status);
+		return response()->json(['message' => $response], $status === Password::RESET_LINK_SENT ? 200 : 404);
 	}
 
-	public function reset(ResetPasswordRequest $request): RedirectResponse
+	public function passwordUpdate(UpdatePasswordRequest $request): JsonResponse
 	{
-		$validatedData = $request->validated();
+		$status = Password::reset($request->only('email', 'password', 'password_confirmation', 'token'), function ($user, $password) {
+			$user->forceFill(['password' => $password]);
+			$user->save();
+			event(new PasswordReset($user));
+		});
 
-		$credentials = [
-			'token'                 => $validatedData['token'],
-			'email'                 => $validatedData['email'],
-			'password'              => $validatedData['password'],
-			'password_confirmation' => $validatedData['password_confirmation'],
-		];
-
-		$response = Password::broker()->reset(
-			$credentials,
-			function ($user, $password) {
-				$user->forceFill([
-					'password' => Hash::make($password),
-				])->save();
-			}
-		);
-
-		if ($response === Password::PASSWORD_RESET) {
-			return redirect(env('FRONT_BASE_URL') . '/login')->with('status', trans('passwords.reset'));
-		} else {
-			return back()->withErrors(['email' => [trans($response)]]);
-		}
+		$response = $status === Password::PASSWORD_RESET ? 'Password updated successfully !' : __($status);
+		return response()->json(['message' => $response], $status === Password::PASSWORD_RESET ? 200 : 404);
 	}
 }
