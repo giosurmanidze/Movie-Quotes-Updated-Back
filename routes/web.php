@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GoogleLoginController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 

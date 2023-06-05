@@ -28,7 +28,11 @@ class User extends Authenticatable implements MustVerifyEmail
 		'username',
 		'email',
 		'password',
+		'google_id',
+		'profile_picture',
 	];
+
+	public $remember_token = false;
 
 	public function setPasswordAttribute($value)
 	{
