@@ -22,7 +22,6 @@ Route::controller(PasswordResetController::class)->group(function () {
 
 Route::controller(QuoteController::class)->group(function () {
 	Route::post('quotes', 'store')->name('quotes.store');
-	Route::get('quotes', 'index')->name('quotes.index');
 });
 
 Route::middleware(['web'])->group(function () {
