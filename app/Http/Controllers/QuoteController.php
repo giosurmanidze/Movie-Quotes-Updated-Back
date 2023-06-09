@@ -8,32 +8,28 @@ use Illuminate\Http\JsonResponse;
 
 class QuoteController extends Controller
 {
-	public function index(): JsonResponse
-	{
-		$quotes = Quote::latest()->with(['movie', 'user'])->paginate(2);
-
-		return response()->json($quotes);
-	}
-
 	public function store(AddQuotesRequest $request): JsonResponse
-	{
-		$attributes = [
-			'body' => [
-				'en' => $request['body_en'],
-				'ka' => $request['body_ka'],
-			],
-			'movie_id'  => $request['movie_id'],
-			'thumbnail' => $request['thumbnail'] = $request->file('thumbnail')->store('thumbnails'),
-		];
+{
+    if (!auth()->check()) {
+        return response()->json('Unauthorized', 401);
+    }
 
-		$attributes['user_id'] = auth()->user()->id;
+    $attributes = [
+        'body' => [
+            'en' => $request['body_en'],
+            'ka' => $request['body_ka'],
+        ],
+        'movie_id' => $request['movie_id'],
+        'thumbnail' => $request->file('thumbnail')->store('thumbnails'),
+        'user_id' => auth()->user()->id,
+    ];
 
-		$quote = Quote::create($attributes);
+    $quote = Quote::create($attributes);
 
-		if (!$quote) {
-			return response()->json('Something went wrong', 422);
-		}
+    if (!$quote) {
+        return response()->json('Something went wrong', 422);
+    }
 
-		return response()->json($quote->load('user')->load('movie'), 200);
-	}
+    return response()->json($quote, 200);
+}
 }
