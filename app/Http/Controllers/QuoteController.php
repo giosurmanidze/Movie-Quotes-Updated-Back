@@ -38,4 +38,11 @@ class QuoteController extends Controller
 
 		return response()->json($quote->load('user')->load('movie'), 200);
 	}
+
+	public function getQuote($id): JsonResponse
+	{
+		$quote = Quote::where('id', $id)->with(['comments', 'likes'])->first();
+
+		return response()->json($quote);
+	}
 }

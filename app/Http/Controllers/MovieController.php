@@ -52,4 +52,17 @@ class MovieController extends Controller
 			$subset
 		);
 	}
+
+	public function getMovie($id): JsonResponse
+	{
+		$movie = Movie::where('id', $id)->with('quotes')->first();
+
+		if (auth()->user()->id !== $movie->user_id)
+		{
+			return response()->json('page is forbidden', 404);
+		}
+
+		return response()->json($movie);
+	}
+
 }
