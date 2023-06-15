@@ -42,7 +42,7 @@ class MovieController extends Controller
 
 	public function index(): JsonResponse
 	{
-		$userMovies = Movie::where('user_id', auth()->user()->id)->latest()->get();
+		$userMovies = Movie::where('user_id', auth()->id())->latest()->get();
 
 		$subset = $userMovies->map(function ($movie) {
 			return $movie->only(['id', 'name', 'thumbnail', 'release_date', 'quotes']);
