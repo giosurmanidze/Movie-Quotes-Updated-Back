@@ -31,6 +31,8 @@ Route::controller(MovieController::class)->group(function () {
 	Route::post('movies', 'store')->name('movies.store');
 	Route::get('movies', 'index')->name('movies.index');
 	Route::get('movies/{movie}', 'getMovie')->name('movies.get');
+	Route::post('movies/{movie}', 'update')->name('movies.update');
+	Route::delete('movies/{movie}', 'destroy')->name('movies.destroy');
 });
 Route::middleware(['web'])->group(function () {
 	Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirect']);
