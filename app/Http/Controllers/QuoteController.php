@@ -26,9 +26,9 @@ class QuoteController extends Controller
 				'en' => $request['body_en'],
 				'ka' => $request['body_ka'],
 			],
-			'movie_id'  => $request['movie_id'],
+			'movie_id'     => $request['movie_id'],
 			'thumbnail'    => $request['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public'),
-			'user_id'   => auth()->user()->id,
+			'user_id'      => auth()->user()->id,
 		];
 
 		$quote = Quote::create($attributes);
@@ -36,6 +36,6 @@ class QuoteController extends Controller
 			return response()->json('Something went wrong', 422);
 		}
 
-		return response()->json($quote, 200);
+		return response()->json($quote->load('user')->load('movie'), 200);
 	}
 }
