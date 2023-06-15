@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMoviesRequest;
+use App\Http\Requests\EditMoviesRequest;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -63,6 +64,46 @@ class MovieController extends Controller
 		}
 
 		return response()->json($movie);
+	}
+
+	public function update(EditMoviesRequest $request, $id): JsonResponse
+	{
+		$movie = Movie::where('id', $id)->first();
+
+		$attributes = [
+			'name' => [
+				'en' => $request['name_en'],
+				'ka' => $request['name_ka'],
+			],
+			'genre' => json_encode($request['genre']),
+
+			'director' => [
+				'en' => $request['director_en'],
+				'ka' => $request['director_ka'],
+			],
+			'description' => [
+				'en' => $request['description_en'],
+				'ka' => $request['description_ka'],
+			],
+			'release_date' => $request['release_date'],
+			'budget'       => $request['budget'],
+		];
+
+		if (isset($request['thumbnail']))
+		{
+			$attributes['thumbnail'] = request()->file('thumbnail')->store('thumbnails');
+		}
+
+		$movie->update($attributes);
+		return response()->json($movie);
+	}
+
+	public function destroy($movieId): JsonResponse
+	{
+		$movie = Movie::where('id', $movieId);
+
+		$movie->delete();
+		return response()->json('Movie deleted successfully');
 	}
 
 }
