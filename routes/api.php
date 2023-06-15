@@ -24,12 +24,13 @@ Route::controller(PasswordResetController::class)->group(function () {
 Route::controller(QuoteController::class)->group(function () {
 	Route::post('quotes', 'store')->name('quotes.store');
 	Route::get('quotes', 'index')->name('quotes.index');
+	Route::get('quotes/{quote}', 'getQuote')->name('quotes.get');
 });
 
 Route::controller(MovieController::class)->group(function () {
 	Route::post('movies', 'store')->name('movies.store');
 	Route::get('movies', 'index')->name('movies.index');
-
+	Route::get('movies/{movie}', 'getMovie')->name('movies.get');
 });
 Route::middleware(['web'])->group(function () {
 	Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirect']);
