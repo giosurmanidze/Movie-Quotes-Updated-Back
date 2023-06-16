@@ -24,7 +24,7 @@ class EditMoviesRequest extends FormRequest
 			'description_ka' => ['required'],
 			'budget'         => 'required',
 			'release_date'   => 'required',
-			'thumbnail'      => '',
+			'thumbnail'      => 'required|image|mimes:jpeg,png,jpg|max:2048',
 		];
 	}
 }

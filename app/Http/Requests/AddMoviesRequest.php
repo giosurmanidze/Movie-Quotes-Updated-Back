@@ -24,7 +24,7 @@ class AddMoviesRequest extends FormRequest
 			'description_ka' => ['required'],
 			'budget'         => 'required',
 			'release_date'   => 'required',
-			'thumbnail'      => 'required',
+			'thumbnail'      => 'required|image|mimes:jpeg,png,jpg|max:2048',
 		];
 	}
 }
