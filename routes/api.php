@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GenreController;
 use App\Http\Controllers\GoogleLoginController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\QuoteController;
@@ -26,6 +27,8 @@ Route::controller(QuoteController::class)->group(function () {
 	Route::get('quotes', 'index')->name('quotes.index');
 	Route::get('quotes/{quote}', 'getQuote')->name('quotes.get');
 });
+
+Route::get('genres', [GenreController::class, 'index'])->name('view.genre');
 
 Route::controller(MovieController::class)->group(function () {
 	Route::post('movies', 'store')->name('movies.store');

@@ -14,16 +14,23 @@ class Movie extends Model
 	protected $fillable = [
 		'name',
 		'user_id',
-		'genre',
 		'director',
 		'description',
 		'release_date',
 		'thumbnail',
 		'budget',
 	];
+
+	protected $guarded = [];
+
 	public function quotes(): HasMany
 	{
 		return $this->hasMany(Quote::class);
+	}
+
+	public function genres()
+	{
+		return $this->belongsToMany(Genre::class, 'genre_movie', 'movie_id', 'genre_id');
 	}
 
 	protected function name(): Attribute
