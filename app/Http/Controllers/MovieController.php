@@ -6,19 +6,19 @@ use App\Http\Requests\AddMoviesRequest;
 use App\Http\Requests\EditMoviesRequest;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    public function store(AddMoviesRequest $request): JsonResponse
+	public function store(AddMoviesRequest $storedRequest): JsonResponse
 	{
+		$request = $storedRequest->validated();
+		$user = auth()->user();
+
 		$movie = Movie::create([
 			'name' => [
 				'en' => $request['name_en'],
 				'ka' => $request['name_ka'],
 			],
-			'genre' => json_encode($request['genre']),
-
 			'director' => [
 				'en' => $request['director_en'],
 				'ka' => $request['director_ka'],
@@ -27,18 +27,16 @@ class MovieController extends Controller
 				'en' => $request['description_en'],
 				'ka' => $request['description_ka'],
 			],
-			'user_id'      => auth()->user()->id,
-			'budget'       => $request['budget'],
 			'release_date' => $request['release_date'],
-			'thumbnail'    => $request['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public'),
+			'budget'       => $request['budget'],
+			'thumbnail'    => $storedRequest->file('thumbnail')->store('thumbnails'),
+			'user_id'      => $user->id,
 		]);
 
-		if (!$movie)
-		{
-			return response()->json('Something went wrong', 422);
-		}
+		$genresIds = array_map('intval', $request['genre']);
 
-		return response()->json($movie->load('quotes'), 200);
+		$movie->genres()->attach($genresIds);
+		return response()->json($movie, 201);
 	}
 
 	public function index(): JsonResponse
@@ -57,26 +55,22 @@ class MovieController extends Controller
 	public function getMovie($id): JsonResponse
 	{
 		$movie = Movie::where('id', $id)->with('quotes')->first();
-
-		if (auth()->user()->id !== $movie->user_id)
-		{
+		if (auth()->user()->id !== $movie->user_id) {
 			return response()->json('page is forbidden', 404);
 		}
 
-		return response()->json($movie);
+		return response()->json([$movie, $movie->genres]);
 	}
 
 	public function update(EditMoviesRequest $request, $id): JsonResponse
 	{
-		$movie = Movie::where('id', $id)->first();
+		$movie = Movie::findOrFail($id);
 
 		$attributes = [
 			'name' => [
 				'en' => $request['name_en'],
 				'ka' => $request['name_ka'],
 			],
-			'genre' => json_encode($request['genre']),
-
 			'director' => [
 				'en' => $request['director_en'],
 				'ka' => $request['director_ka'],
@@ -89,21 +83,16 @@ class MovieController extends Controller
 			'budget'       => $request['budget'],
 		];
 
-		if (isset($request['thumbnail']))
-		{
+		if (isset($request['thumbnail'])) {
 			$attributes['thumbnail'] = request()->file('thumbnail')->store('thumbnails');
 		}
 
+		$genresIds = array_map('intval', $request['genre']);
+
+		$movie->genres()->sync($genresIds);
 		$movie->update($attributes);
+
 		return response()->json($movie);
-	}
-
-	public function destroy($movieId): JsonResponse
-	{
-		$movie = Movie::where('id', $movieId);
-
-		$movie->delete();
-		return response()->json('Movie deleted successfully');
 	}
 
 }
