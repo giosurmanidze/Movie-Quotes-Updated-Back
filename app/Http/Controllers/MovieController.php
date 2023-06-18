@@ -33,7 +33,7 @@ class MovieController extends Controller
 			'user_id'      => $user->id,
 		]);
 
-		$genresIds = array_map('intval', $request['genre']);
+		$genresIds = json_decode($request['genre'], true);
 
 		$movie->genres()->attach($genresIds);
 		return response()->json($movie, 201);
@@ -41,7 +41,7 @@ class MovieController extends Controller
 
 	public function index(): JsonResponse
 	{
-		$userMovies = Movie::where('user_id', auth()->id())->latest()->get();
+		$userMovies = auth()->user()->movies()->latest()->get();
 
 		$subset = $userMovies->map(function ($movie) {
 			return $movie->only(['id', 'name', 'thumbnail', 'release_date', 'quotes']);
@@ -86,13 +86,10 @@ class MovieController extends Controller
 		if (isset($request['thumbnail'])) {
 			$attributes['thumbnail'] = request()->file('thumbnail')->store('thumbnails');
 		}
-
-		$genresIds = array_map('intval', $request['genre']);
+		$genresIds = json_decode($request['genre'], true);
 
 		$movie->genres()->sync($genresIds);
 		$movie->update($attributes);
-
 		return response()->json($movie);
 	}
-
 }
