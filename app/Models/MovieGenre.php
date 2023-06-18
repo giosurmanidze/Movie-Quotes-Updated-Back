@@ -9,5 +9,5 @@ class MovieGenre extends Model
 {
 	use HasFactory;
 
-	protected $guarded = [];
+	protected $guarded = ['id'];
 }

@@ -4,62 +4,56 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMoviesRequest;
 use App\Http\Requests\EditMoviesRequest;
+use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
 
 class MovieController extends Controller
 {
-	public function store(AddMoviesRequest $storedRequest): JsonResponse
+	public function store(AddMoviesRequest $request): JsonResponse
 	{
-		$request = $storedRequest->validated();
+		$storedRequest = $request->validated();
 		$user = auth()->user();
 
 		$movie = Movie::create([
 			'name' => [
-				'en' => $request['name_en'],
-				'ka' => $request['name_ka'],
+				'en' => $storedRequest['name_en'],
+				'ka' => $storedRequest['name_ka'],
 			],
 			'director' => [
-				'en' => $request['director_en'],
-				'ka' => $request['director_ka'],
+				'en' => $storedRequest['director_en'],
+				'ka' => $storedRequest['director_ka'],
 			],
 			'description' => [
-				'en' => $request['description_en'],
-				'ka' => $request['description_ka'],
+				'en' => $storedRequest['description_en'],
+				'ka' => $storedRequest['description_ka'],
 			],
-			'release_date' => $request['release_date'],
-			'budget'       => $request['budget'],
-			'thumbnail'    => $storedRequest->file('thumbnail')->store('thumbnails'),
+			'release_date' => $storedRequest['release_date'],
+			'budget'       => $storedRequest['budget'],
+			'thumbnail'    => $request->file('thumbnail')->store('thumbnails'),
 			'user_id'      => $user->id,
 		]);
 
 		$genresIds = json_decode($request['genre'], true);
 
 		$movie->genres()->attach($genresIds);
-		return response()->json($movie, 201);
+		return response()->json($movie);
 	}
 
 	public function index(): JsonResponse
 	{
-		$userMovies = auth()->user()->movies()->latest()->get();
+		$movie = MovieResource::collection(auth()->user()->movies->sortByDesc('created_at'));
 
-		$subset = $userMovies->map(function ($movie) {
-			return $movie->only(['id', 'name', 'thumbnail', 'release_date', 'quotes']);
-		});
-
-		return response()->json(
-			$subset
-		);
+		return response()->json($movie, 200);
 	}
 
-	public function getMovie($id): JsonResponse
+	public function show(Movie $movie): JsonResponse
 	{
-		$movie = Movie::where('id', $id)->with('quotes')->first();
-		if (auth()->user()->id !== $movie->user_id) {
-			return response()->json('page is forbidden', 404);
+		if ($movie->user_id !== auth()->id()) {
+			return response()->json(['message' => 'Not Authorized'], 401);
 		}
 
-		return response()->json([$movie, $movie->genres]);
+		return response()->json(MovieResource::make($movie), 200);
 	}
 
 	public function update(EditMoviesRequest $request, $id): JsonResponse

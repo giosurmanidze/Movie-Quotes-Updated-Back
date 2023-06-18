@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuotesRequest;
+use App\Http\Resources\QuotePostResource;
+use App\Http\Resources\QuoteResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 
@@ -10,15 +12,15 @@ class QuoteController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$quotes = Quote::latest()->with(['movie', 'user'])->paginate(2);
+		$quote = QuoteResource::collection(Quote::orderByDesc('id')->get());
 
-		return response()->json($quotes);
+		return response()->json($quote, 200);
 	}
 
 	public function store(AddQuotesRequest $request): JsonResponse
 	{
 		$attributes = [
-			'body' => [
+			'quote' => [
 				'en' => $request['body_en'],
 				'ka' => $request['body_ka'],
 			],
@@ -35,10 +37,12 @@ class QuoteController extends Controller
 		return response()->json($quote->load('user')->load('movie'), 200);
 	}
 
-	public function getQuote($id): JsonResponse
+	public function show(Quote $quote): JsonResponse
 	{
-		$quote = Quote::where('id', $id)->with(['comments', 'likes'])->first();
+		if ($quote->user_id !== auth()->id()) {
+			return response()->json(['message' => 'Not Authorized'], 401);
+		}
 
-		return response()->json($quote);
+		return response()->json(QuotePostResource::make($quote), 200);
 	}
 }
