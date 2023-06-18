@@ -17,10 +17,6 @@ class QuoteController extends Controller
 
 	public function store(AddQuotesRequest $request): JsonResponse
 	{
-		if (!auth()->check()) {
-			return response()->json('Unauthorized', 401);
-		}
-
 		$attributes = [
 			'body' => [
 				'en' => $request['body_en'],
