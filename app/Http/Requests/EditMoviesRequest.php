@@ -17,7 +17,6 @@ class EditMoviesRequest extends FormRequest
 		return [
 			'name_en'        => ['required', Rule::unique('movies', 'name')],
 			'name_ka'        => ['required',  Rule::unique('movies', 'name')],
-			'genre'          => ['required'],
 			'director_en'    => ['required'],
 			'director_ka'    => ['required'],
 			'description_en' => ['required'],

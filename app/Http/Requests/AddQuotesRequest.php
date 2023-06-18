@@ -15,8 +15,8 @@ class AddQuotesRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'body_en'   => ['required', Rule::unique('quotes', 'body')],
-			'body_ka'   => ['required', Rule::unique('quotes', 'body')],
+			'body_en'   => ['required', Rule::unique('quotes', 'quote')],
+			'body_ka'   => ['required', Rule::unique('quotes', 'quote')],
 			'movie_id'  => 'required',
 			'thumbnail' => 'required',
 		];

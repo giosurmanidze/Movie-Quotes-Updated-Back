@@ -5,13 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Quote extends Model
 {
 	use HasFactory;
 
-	protected $fillable = ['user_id', 'body', 'movie_id', 'thumbnail'];
+	use HasTranslations;
+
+	protected $guarded = ['id'];
+
+	public $translatable = ['quote'];
 
 	public function movie(): BelongsTo
 	{
