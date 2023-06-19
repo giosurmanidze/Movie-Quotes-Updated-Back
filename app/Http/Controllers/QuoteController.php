@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuotesRequest;
+use App\Http\Requests\EditQuoteRequest;
 use App\Http\Resources\QuotePostResource;
 use App\Http\Resources\QuoteResource;
 use App\Models\Quote;
@@ -44,5 +45,31 @@ class QuoteController extends Controller
 		}
 
 		return response()->json(QuotePostResource::make($quote), 200);
+	}
+
+	public function update(EditQuoteRequest $request, $quoteId): JsonResponse
+	{
+		$quote = Quote::where('id', $quoteId)->first();
+
+		$attributes = [
+			'quote' => [
+				'en' => $request['body_en'],
+				'ka' => $request['body_ka'],
+			],
+		];
+
+		if (isset($request['thumbnail'])) {
+			$attributes['thumbnail'] = request()->file('thumbnail')->store('thumbnails');
+		}
+
+		$quote->update($attributes);
+
+		return response()->json($quote);
+	}
+	public function destroy($quoteId)
+	{
+		$quote = Quote::where('id', $quoteId);
+		$quote->delete();
+		return response()->json('Quote deleted successfully');
 	}
 }
