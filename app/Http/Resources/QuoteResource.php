@@ -18,10 +18,8 @@ class QuoteResource extends JsonResource
 			'id'        => $this->id,
 			'quote'     => $this->getTranslations('quote'),
 			'thumbnail' => $this->thumbnail,
-			'movie'     => [
-				'name' => $this->movie->getTranslations('name'),
-				'year' => $this->movie->release_date,
-			],
+			'year'      => $this->movie->release_date,
+			'name'      => $this->movie->getTranslations('name'),
 		];
 	}
 }
