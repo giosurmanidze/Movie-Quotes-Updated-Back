@@ -7,15 +7,13 @@ use App\Http\Requests\EditQuoteRequest;
 use App\Http\Resources\QuotePostResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class QuoteController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$quote = QuotePostResource::collection(Quote::orderByDesc('id')->get());
-
-		return response()->json($quote, 200);
+		$quotes = QuotePostResource::collection(Quote::orderByDesc('id')->get());
+		return response()->json($quotes, 200);
 	}
 
 	public function store(AddQuotesRequest $request): JsonResponse
