@@ -25,6 +25,7 @@ class QuotePostResource extends JsonResource
 			'thumbnail'     => $this->thumbnail,
 			'user'          => UserResource::make($this->user),
 			'comments'      => CommentResource::collection($this->comments),
+			'likes'         => LikeResoure::collection($this->likes),
 		];
 	}
 }

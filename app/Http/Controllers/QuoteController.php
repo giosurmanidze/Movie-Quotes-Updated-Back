@@ -7,6 +7,7 @@ use App\Http\Requests\EditQuoteRequest;
 use App\Http\Resources\QuotePostResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class QuoteController extends Controller
 {
@@ -65,6 +66,7 @@ class QuoteController extends Controller
 
 		return response()->json($quote);
 	}
+
 	public function destroy($quoteId)
 	{
 		$quote = Quote::where('id', $quoteId);

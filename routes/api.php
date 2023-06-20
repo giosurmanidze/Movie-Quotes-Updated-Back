@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\GoogleLoginController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\MovieController;
@@ -33,6 +34,11 @@ Route::controller(QuoteController::class)->group(function () {
 
 Route::get('genres', [GenreController::class, 'index'])->name('view.genre');
 Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
+
+Route::controller(LikeController::class)->group(function () {
+	Route::post('like', 'like')->name('like');
+	Route::post('likes/{quote:id}/likeable', 'likeable')->name('likeable');
+});
 
 Route::controller(MovieController::class)->group(function () {
 	Route::post('movies', 'store')->name('movies.store');
