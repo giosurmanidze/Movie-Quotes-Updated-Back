@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\GoogleLoginController;
 use App\Http\Controllers\PasswordResetController;
@@ -31,6 +32,7 @@ Route::controller(QuoteController::class)->group(function () {
 });
 
 Route::get('genres', [GenreController::class, 'index'])->name('view.genre');
+Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
 
 Route::controller(MovieController::class)->group(function () {
 	Route::post('movies', 'store')->name('movies.store');

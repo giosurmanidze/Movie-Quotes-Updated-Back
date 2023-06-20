@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddQuotesRequest;
 use App\Http\Requests\EditQuoteRequest;
 use App\Http\Resources\QuotePostResource;
-use App\Http\Resources\QuoteResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 
@@ -13,7 +12,7 @@ class QuoteController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$quote = QuoteResource::collection(Quote::orderByDesc('id')->get());
+		$quote = QuotePostResource::collection(Quote::orderByDesc('id')->get());
 
 		return response()->json($quote, 200);
 	}
