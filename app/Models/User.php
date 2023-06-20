@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\VerifyEmail;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -37,6 +38,11 @@ class User extends Authenticatable implements MustVerifyEmail
 	public function movies()
 	{
 		return $this->hasMany(Movie::class);
+	}
+
+	public function likes(): HasMany
+	{
+		return $this->hasMany(Like::class);
 	}
 
 	public function setPasswordAttribute($value)
