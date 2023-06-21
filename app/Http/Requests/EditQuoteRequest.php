@@ -16,7 +16,7 @@ class EditQuoteRequest extends FormRequest
 		return [
 			'body_en'        => ['required'],
 			'body_ka'        => ['required'],
-			'thumbnail'      => 'image|mimes:jpeg,png,jpg|max:2048',
+			'thumbnail'      => ['image', 'mimes:jpeg,png,jpg', 'max:2048'],
 		];
 	}
 }

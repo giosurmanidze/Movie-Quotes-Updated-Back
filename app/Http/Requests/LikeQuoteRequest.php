@@ -14,8 +14,8 @@ class LikeQuoteRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'quote_id' => 'required',
-			'like'     => 'required',
+			'quote_id' => ['required'],
+			'like'     => ['required'],
 		];
 	}
 }

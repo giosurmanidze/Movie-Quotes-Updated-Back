@@ -17,8 +17,8 @@ class AddQuotesRequest extends FormRequest
 		return [
 			'body_en'   => ['required', Rule::unique('quotes', 'quote')],
 			'body_ka'   => ['required', Rule::unique('quotes', 'quote')],
-			'movie_id'  => 'required',
-			'thumbnail' => 'required',
+			'movie_id'  => ['required'],
+			'thumbnail' => ['required'],
 		];
 	}
 }
