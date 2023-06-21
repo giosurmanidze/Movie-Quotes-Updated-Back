@@ -45,10 +45,8 @@ class QuoteController extends Controller
 		return response()->json(QuotePostResource::make($quote), 200);
 	}
 
-	public function update(EditQuoteRequest $request, $quoteId): JsonResponse
+	public function update(EditQuoteRequest $request, Quote $quote): JsonResponse
 	{
-		$quote = Quote::where('id', $quoteId)->first();
-
 		$attributes = [
 			'quote' => [
 				'en' => $request['body_en'],
@@ -56,18 +54,16 @@ class QuoteController extends Controller
 			],
 		];
 
-		if (isset($request['thumbnail'])) {
-			$attributes['thumbnail'] = request()->file('thumbnail')->store('thumbnails');
+		if ($request->hasFile('thumbnail')) {
+			$attributes['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
 		}
 
 		$quote->update($attributes);
-
 		return response()->json($quote);
 	}
 
-	public function destroy($quoteId)
+	public function destroy(Quote $quote)
 	{
-		$quote = Quote::where('id', $quoteId);
 		$quote->delete();
 		return response()->json('Quote deleted successfully');
 	}

@@ -28,18 +28,10 @@ class LikeController extends Controller
 
 		if (!$isLiked) {
 			Like::create($attributes);
-
 			return response()->json('liked');
 		} else {
 			$isLiked->delete();
 			return response()->json('like deleted');
 		}
-	}
-
-	public function likeable(Quote $quote): JsonResponse
-	{
-		$like = Like::where('user_id', auth()->user()->id)->where('quote_id', $quote->id)->first();
-
-		return response()->json(['likeable' => $like ? false : true]);
 	}
 }

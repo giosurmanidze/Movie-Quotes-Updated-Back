@@ -35,7 +35,6 @@ class MovieController extends Controller
 		]);
 
 		$genresIds = json_decode($request['genre'], true);
-
 		$movie->genres()->attach($genresIds);
 		return response()->json($movie);
 	}
@@ -43,7 +42,6 @@ class MovieController extends Controller
 	public function index(): JsonResponse
 	{
 		$movie = MovieResource::collection(auth()->user()->movies->sortByDesc('created_at'));
-
 		return response()->json($movie, 200);
 	}
 
@@ -56,20 +54,18 @@ class MovieController extends Controller
 		return response()->json(MovieResource::make($movie), 200);
 	}
 
-	public function update(EditMoviesRequest $request, $id): JsonResponse
+	public function update(EditMoviesRequest $request, Movie $movie): JsonResponse
 	{
-		$movie = Movie::findOrFail($id);
-
 		$attributes = [
-			'name' => [
+			'name'         => [
 				'en' => $request['name_en'],
 				'ka' => $request['name_ka'],
 			],
-			'director' => [
+			'director'     => [
 				'en' => $request['director_en'],
 				'ka' => $request['director_ka'],
 			],
-			'description' => [
+			'description'  => [
 				'en' => $request['description_en'],
 				'ka' => $request['description_ka'],
 			],
@@ -77,9 +73,10 @@ class MovieController extends Controller
 			'budget'       => $request['budget'],
 		];
 
-		if (isset($request['thumbnail'])) {
-			$attributes['thumbnail'] = request()->file('thumbnail')->store('thumbnails');
+		if ($request->hasFile('thumbnail')) {
+			$attributes['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
 		}
+
 		$genresIds = json_decode($request['genre'], true);
 
 		$movie->genres()->sync($genresIds);

@@ -38,9 +38,7 @@ Route::post('comments', [CommentController::class, 'store'])->name('comments.sto
 
 Route::controller(LikeController::class)->group(function () {
 	Route::post('like', 'like')->name('like');
-	Route::post('likes/{quote:id}/likeable', 'likeable')->name('likeable');
 });
-
 Route::controller(MovieController::class)->group(function () {
 	Route::post('movies', 'store')->name('movies.store');
 	Route::get('movies', 'index')->name('movies.index');
