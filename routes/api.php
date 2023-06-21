@@ -29,7 +29,7 @@ Route::controller(QuoteController::class)->group(function () {
 	Route::get('quotes', 'index')->name('quotes.index');
 	Route::get('quotes/{quote}', 'show')->name('quotes.get');
 	Route::post('quotes/{quote}', 'update')->name('quotes.update');
-	Route::post('quotes/refresh', 'index')->name('quotes.refresh');
+	Route::post('quotes-refresh', 'index')->name('quotes.refresh');
 	Route::delete('quotes/{quote}', 'destroy')->name('quotes.destroy');
 });
 
