@@ -21,9 +21,9 @@ class AddMoviesRequest extends FormRequest
 			'director_ka'    => ['required'],
 			'description_en' => ['required'],
 			'description_ka' => ['required'],
-			'budget'         => 'required',
-			'release_date'   => 'required',
-			'thumbnail'      => 'required|image|mimes:jpeg,png,jpg|max:2048',
+			'budget'         => ['required'],
+			'release_date'   => ['required'],
+			'thumbnail'      => ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
 		];
 	}
 }

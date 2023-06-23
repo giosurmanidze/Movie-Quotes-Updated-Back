@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GenreController;
 use App\Http\Controllers\GoogleLoginController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\MovieController;
@@ -26,9 +28,16 @@ Route::controller(QuoteController::class)->group(function () {
 	Route::post('quotes', 'store')->name('quotes.store');
 	Route::get('quotes', 'index')->name('quotes.index');
 	Route::get('quotes/{quote}', 'show')->name('quotes.get');
+	Route::post('quotes/{quote}', 'update')->name('quotes.update');
+	Route::post('quotes-refresh', 'index')->name('quotes.refresh');
+	Route::delete('quotes/{quote}', 'destroy')->name('quotes.destroy');
 });
 
 Route::get('genres', [GenreController::class, 'index'])->name('view.genre');
+Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
+
+Route::post('likes', [LikeController::class, 'store'])->name('like.store');
+Route::delete('likes/{like}', [LikeController::class, 'destroy'])->name('like.destroy');
 
 Route::controller(MovieController::class)->group(function () {
 	Route::post('movies', 'store')->name('movies.store');

@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class AddQuotesRequest extends FormRequest
+class LikeQuoteRequest extends FormRequest
 {
 	/**
 	 * Get the validation rules that apply to the request.
@@ -15,10 +14,7 @@ class AddQuotesRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'body_en'   => ['required', Rule::unique('quotes', 'quote')],
-			'body_ka'   => ['required', Rule::unique('quotes', 'quote')],
-			'movie_id'  => ['required'],
-			'thumbnail' => ['required'],
+			'quote_id' => ['required'],
 		];
 	}
 }

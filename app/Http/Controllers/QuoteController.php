@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuotesRequest;
+use App\Http\Requests\EditQuoteRequest;
 use App\Http\Resources\QuotePostResource;
-use App\Http\Resources\QuoteResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
 
@@ -12,9 +12,8 @@ class QuoteController extends Controller
 {
 	public function index(): JsonResponse
 	{
-		$quote = QuoteResource::collection(Quote::orderByDesc('id')->get());
-
-		return response()->json($quote, 200);
+		$quotes = QuotePostResource::collection(Quote::orderByDesc('id')->get());
+		return response()->json($quotes, 200);
 	}
 
 	public function store(AddQuotesRequest $request): JsonResponse
@@ -44,5 +43,28 @@ class QuoteController extends Controller
 		}
 
 		return response()->json(QuotePostResource::make($quote), 200);
+	}
+
+	public function update(EditQuoteRequest $request, Quote $quote): JsonResponse
+	{
+		$attributes = [
+			'quote' => [
+				'en' => $request['body_en'],
+				'ka' => $request['body_ka'],
+			],
+		];
+
+		if ($request->hasFile('thumbnail')) {
+			$attributes['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
+		}
+
+		$quote->update($attributes);
+		return response()->json($quote);
+	}
+
+	public function destroy(Quote $quote)
+	{
+		$quote->delete();
+		return response()->json('Quote deleted successfully');
 	}
 }
