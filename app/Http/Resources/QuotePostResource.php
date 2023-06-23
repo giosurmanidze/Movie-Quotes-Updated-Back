@@ -15,15 +15,17 @@ class QuotePostResource extends JsonResource
 	public function toArray(Request $request): array
 	{
 		return [
-			'id'           => $this->id,
-			'quote'        => $this->getTranslations('quote'),
-			'quote_ka'     => $this->getTranslation('quote', 'ka'),
-			'quote_en'     => $this->getTranslation('quote', 'en'),
-			'movie'        => MovieResource::make($this->movie)->getTranslations('name'),
-			'year'         => MovieResource::make($this->movie)->release_date,
-			'movie_id'     => MovieResource::make($this->movie)->id,
-			'thumbnail'    => $this->thumbnail,
-			'user'         => UserResource::make($this->user),
+			'id'            => $this->id,
+			'quote'         => $this->getTranslations('quote'),
+			'quote_ka'      => $this->getTranslation('quote', 'ka'),
+			'quote_en'      => $this->getTranslation('quote', 'en'),
+			'movie'         => MovieResource::make($this->movie)->getTranslations('name'),
+			'year'          => MovieResource::make($this->movie)->release_date,
+			'movie_id'      => MovieResource::make($this->movie)->id,
+			'thumbnail'     => $this->thumbnail,
+			'user'          => UserResource::make($this->user),
+			'comments'      => CommentResource::collection($this->comments),
+			'likes'         => LikeResoure::collection($this->likes),
 		];
 	}
 }
