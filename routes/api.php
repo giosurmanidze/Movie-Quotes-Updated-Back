@@ -36,9 +36,9 @@ Route::controller(QuoteController::class)->group(function () {
 Route::get('genres', [GenreController::class, 'index'])->name('view.genre');
 Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
 
-Route::controller(LikeController::class)->group(function () {
-	Route::post('like', 'like')->name('like');
-});
+Route::post('likes', [LikeController::class, 'store'])->name('like.store');
+Route::delete('likes/{like}', [LikeController::class, 'destroy'])->name('like.destroy');
+
 Route::controller(MovieController::class)->group(function () {
 	Route::post('movies', 'store')->name('movies.store');
 	Route::get('movies', 'index')->name('movies.index');
