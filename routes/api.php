@@ -10,8 +10,6 @@ use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'getUser']);
-
 Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/user', [AuthController::class, 'getUser']);
 
@@ -39,20 +37,18 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::delete('likes/{like}', [LikeController::class, 'destroy'])->name('like.destroy');
 });
 
-Route::group(['middleware' => 'guest:api'], function () {
-	Route::controller(AuthController::class)->group(function () {
-		Route::post('register', 'register')->name('register');
-		Route::post('login', 'login')->name('login');
-		Route::get('/email/verify/{id}/{hash}', 'verify')->name('verification.verify');
-		Route::post('logout', 'logout')->name('logout');
-	});
+Route::controller(AuthController::class)->group(function () {
+	Route::post('register', 'register')->name('register');
+	Route::post('login', 'login')->name('login');
+	Route::get('/email/verify/{id}/{hash}', 'verify')->name('verification.verify');
+	Route::post('logout', 'logout')->name('logout');
+});
 
-	Route::controller(PasswordResetController::class)->group(function () {
-		Route::post('/forgot-password', 'forgotPassword')->name('password.email');
-		Route::post('/reset-password', 'passwordUpdate')->name('password.reset');
-	});
-	Route::middleware(['web'])->group(function () {
-		Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirect']);
-		Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback']);
-	});
+Route::controller(PasswordResetController::class)->group(function () {
+	Route::post('/forgot-password', 'forgotPassword')->name('password.email');
+	Route::post('/reset-password', 'passwordUpdate')->name('password.reset');
+});
+Route::middleware(['web'])->group(function () {
+	Route::get('/auth/google/redirect', [GoogleLoginController::class, 'redirect']);
+	Route::get('/auth/google/callback', [GoogleLoginController::class, 'callback']);
 });
