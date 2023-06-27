@@ -8,6 +8,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -28,6 +29,11 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::get('movies/{movie}', 'show')->name('movies.get');
 		Route::post('movies/{movie}', 'update')->name('movies.update');
 		Route::delete('movies/{movie}', 'destroy')->name('movies.destroy');
+	});
+
+	Route::controller(UserController::class)->group(function () {
+		Route::patch('user/update-name', 'updateName')->name('update.name');
+		Route::post('user/profile-avatar', 'storeProfileAvatar')->name('profile.avatar');
 	});
 
 	Route::get('genres', [GenreController::class, 'index'])->name('view.genre');
