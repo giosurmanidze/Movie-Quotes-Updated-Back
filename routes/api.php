@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
 	Route::controller(UserController::class)->group(function () {
 		Route::patch('user/update-name', 'updateName')->name('update.name');
 		Route::post('user/profile-avatar', 'storeProfileAvatar')->name('profile.avatar');
+		Route::post('user/update-password', 'updatePassowrd')->name('update.password');
 	});
 
 	Route::get('genres', [GenreController::class, 'index'])->name('view.genre');
