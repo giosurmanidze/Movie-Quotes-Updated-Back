@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateNameRequest extends FormRequest
+class AddNewEmailRequest extends FormRequest
 {
 	/**
 	 * Get the validation rules that apply to the request.
@@ -14,16 +14,17 @@ class UpdateNameRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'username' => ['required', 'min:3', 'max:15', 'unique:users', 'regex:/^[a-z0-9]*$/'],
+			'email'    => 'required|email|unique:users|unique:emails',
+			'user_id'  => 'required',
 		];
 	}
 
 	public function messages()
 	{
 		return [
-			'username.unique' => [
-				'ka' => __('validation.unique', ['attribute' => 'სახელი'], 'ka'),
-				'en' => __('validation.unique', ['attribute' => 'name'], 'en'),
+			'email.unique' => [
+				'en' => __('validation.unique', ['attribute' => 'email'], 'en'),
+				'ka' => __('validation.unique', ['attribute' => 'იმეილი'], 'ka'),
 			],
 		];
 	}
