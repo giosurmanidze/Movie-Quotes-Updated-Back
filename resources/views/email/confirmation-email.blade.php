@@ -3,7 +3,8 @@
         <table style="align-items: center; text-align: center; width: 100%">
             <tr>
                 <td style="align-items: center; text-align: center">
-                    <img src="https://i.postimg.cc/GhR6x8N5/quote-icon.png" title="Quote Icon" />
+                    <img src="https://i.postimg.cc/GhR6x8N5/quote-icon.png" title="Quote Icon" width="22px" height="22px"
+                        alt="not found" />
                     <p style="color: #DDCCAA">MOVIE QUOTES</p>
                 </td>
             </tr>
@@ -12,7 +13,7 @@
         <br />
         <table>
             <tr>
-                <td style="color: white">Holla {{ $name }}!</td>
+                <td style="color: white">Holla {{ $user->username }}!</td>
             </tr>
             <br />
             <tr>
@@ -20,15 +21,15 @@
                     really
                     appreciate it. Please click the button
                     below to verify your
-                    account:
+                    email:
                 </td>
             </tr>
             <br />
             <tr>
                 <td>
-                    <a href="{{ $url }}"
+                    <a href="{{ env('FRONT_BASE_URL') . '/email-verified/' . $user->id }}"
                         style="text-decoration: none; padding: 10px; border-radius: 6px;  color: white; background-color: #E31221;">
-                        Forgot password
+                        Verify email
                     </a>
             </tr>
             <br />
@@ -44,7 +45,7 @@
             <br />
             <tr>
                 <td>
-                    {{ $url }}
+                    <a style="color: #DDCCAA">{{ env('FRONT_BASE_URL') . '/email-verified/' . $user->id }}</a>
                 </td>
             </tr>
             <br />

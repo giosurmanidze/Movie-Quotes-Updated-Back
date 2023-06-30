@@ -32,9 +32,11 @@ Route::middleware('auth:sanctum')->group(function () {
 	});
 
 	Route::controller(UserController::class)->group(function () {
-		Route::patch('user/update-name', 'updateName')->name('update.name');
+		Route::post('user/update-name', 'updateName')->name('update.name');
 		Route::post('user/profile-avatar', 'storeProfileAvatar')->name('profile.avatar');
 		Route::post('user/update-password', 'updatePassowrd')->name('update.password');
+		Route::post('user/add-email', 'addEmail')->name('email.add');
+		Route::get('confirm-account/{user}', 'confirmEmail')->name('confirm-account');
 	});
 
 	Route::get('genres', [GenreController::class, 'index'])->name('view.genre');
