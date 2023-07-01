@@ -17,7 +17,6 @@ class UpdatePasswordRequest extends FormRequest
 			'token'                     => ['required'],
 			'email'                     => ['required', 'email'],
 			'password'                  => ['required', 'min:8', 'max:15', 'confirmed', 'regex:/^[a-z0-9]*$/'],
-			'password_confirmation'     => ['required'],
 		];
 	}
 }

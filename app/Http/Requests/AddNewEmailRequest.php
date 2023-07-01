@@ -14,8 +14,7 @@ class AddNewEmailRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'email'    => 'required|email|unique:users|unique:emails',
-			'user_id'  => 'required',
+			'email'    => ['required', 'email', 'unique:users'],
 		];
 	}
 

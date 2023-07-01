@@ -3,64 +3,56 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddNewEmailRequest;
-use App\Http\Requests\StoreProfileAvatarRequest;
-use App\Http\Requests\UpdateNameRequest;
-use App\Http\Requests\UpdateUserPassowrdRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Mail\UpdateEmailVerifyMail;
-use App\Models\Email;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
-	public function updateName(UpdateNameRequest $request): JsonResponse
+	public function update(UpdateUserRequest $request): JsonResponse
 	{
 		$user = User::find(auth()->id());
-		$user->update(['username' => $request->username]);
-		return response()->json(['message' => 'User updated successfully'], 200);
-	}
 
-	public function storeProfileAvatar(StoreProfileAvatarRequest $request): JsonResponse
-	{
-		$user = User::find(auth()->id());
-		$path = $request->file('thumbnail')->store('thumbnails');
-		$user->profile_picture = $path;
-		$user->save();
-		return response()->json(['message' => 'Profile picture set successfully'], 201);
-	}
+		$attributes = [];
 
-	public function updatePassowrd(UpdateUserPassowrdRequest $request)
-	{
-		$user = User::find(auth()->id());
-		$user->forceFill([
-			'password' => $request->password,
-		]);
+		if (isset($request['username'])) {
+			$attributes['username'] = $request['username'];
+		}
+
+		if ($request->hasFile('thumbnail')) {
+			if ($user->profile_picture) {
+				Storage::delete($user->profile_picture);
+			}
+			$attributes['profile_picture'] = $request->file('thumbnail')->store('thumbnails');
+		}
+
+		if (isset($request['password'])) {
+			$attributes['password'] = $request['password'];
+		}
+
+		$user->fill($attributes);
 		$user->save();
-		return response()->json(['message' => 'Password updated successfully'], 200);
+
+		return response()->json('success');
 	}
 
 	public function addEmail(AddNewEmailRequest $request): JsonResponse
 	{
-		$email = Email::create($request->validated());
-		$user = User::find($request->user_id);
-		// $confirmationLink = url(env('FRONT_BASE_URL') . '/user-profile/' . $user->id);
-		Mail::to($email)->send(new UpdateEmailVerifyMail($user));
+		$user = User::find(auth()->id());
+		Mail::to($request->email)->send(new UpdateEmailVerifyMail($user, $request->email));
 
 		return response()->json(['message' => 'Email created successfully!']);
 	}
 
-	public function confirmEmail(User $user): JsonResponse
+	public function confirmEmail(Request $request, User $user): JsonResponse
 	{
 		$user->email_verified_at = now();
-		$latestEmail = $user->emails()->latest()->first();
-
-		if ($latestEmail) {
-			$user->email = $latestEmail->email;
-			$user->save();
-
-			$latestEmail->delete();
-		}
+		$user->email = $request->email;
+		$user->save();
 
 		return response()->json(['message' => 'Email verified successfully!']);
 	}
