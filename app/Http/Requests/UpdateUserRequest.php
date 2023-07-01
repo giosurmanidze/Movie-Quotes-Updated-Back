@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateNameRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
 	/**
 	 * Get the validation rules that apply to the request.
@@ -14,7 +14,8 @@ class UpdateNameRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'username' => ['required', 'min:3', 'max:15', 'unique:users', 'regex:/^[a-z0-9]*$/'],
+			'username'                  => ['min:3', 'max:15', 'unique:users', 'regex:/^[a-z0-9]*$/'],
+			'thumbnail'                 => ['image', 'mimes:jpeg,png,jpg', 'max:2048'],
 		];
 	}
 

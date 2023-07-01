@@ -27,7 +27,7 @@
             <br />
             <tr>
                 <td>
-                    <a href="{{ env('FRONT_BASE_URL') . '/email-verified/' . $user->id }}"
+                    <a href="{{ env('FRONT_BASE_URL') . '/email-verified?userId='. $user->id .'&email=' . $email }}"
                         style="text-decoration: none; padding: 10px; border-radius: 6px;  color: white; background-color: #E31221;">
                         Verify email
                     </a>
@@ -45,7 +45,7 @@
             <br />
             <tr>
                 <td>
-                    <a style="color: #DDCCAA">{{ env('FRONT_BASE_URL') . '/email-verified/' . $user->id }}</a>
+                    <a style="color: #DDCCAA">{{ env('FRONT_BASE_URL') . '/email-verified?userId='. $user->id .'&email=' . $email }}</a>
                 </td>
             </tr>
             <br />

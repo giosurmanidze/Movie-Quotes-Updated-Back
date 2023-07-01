@@ -9,31 +9,27 @@ use Illuminate\Queue\SerializesModels;
 
 class UpdateEmailVerifyMail extends Mailable
 {
-    use Queueable;
-    use SerializesModels;
+	use Queueable;
 
-    public $user;
+	use SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @param User $user
-     * @param string $confirmationLink
-     */
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
+	/**
+	 * Create a new message instance.
+	 *
+	 * @param User   $user
+	 * @param string $email
+	 */
+	public function __construct(public $user, public $email)
+	{
+	}
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build(): Mailable
-    {
-        return $this->view('email.confirmation-email', [
-            'user' => $this->user,
-        ]);
-    }
+	/**
+	 * Build the message.
+	 *
+	 * @return $this
+	 */
+	public function build(): Mailable
+	{
+		return $this->view('email.confirmation-email')->subject('Verify New Email');
+	}
 }
