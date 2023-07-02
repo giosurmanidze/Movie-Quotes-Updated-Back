@@ -49,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
 	Route::controller(NotificationController::class)->group(function () {
 		Route::get('get-notifications', 'index')->name('notifications.index');
+		Route::get('get-unread-notifications', 'unread')->name('notifications.unread');
+		Route::post('mark-read', 'markAsRead')->name('notification.mark');
 	});
 });
 
