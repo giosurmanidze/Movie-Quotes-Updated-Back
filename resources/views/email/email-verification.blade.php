@@ -3,7 +3,7 @@
         <table style="align-items: center; text-align: center; width: 100%">
             <tr>
                 <td style="align-items: center; text-align: center">
-                    <img src="{{ $message->embed(public_path('images/bi_chat-quote-fill.svg')) }}" title="Quote Icon" />
+                    <img src="https://i.postimg.cc/GhR6x8N5/quote-icon.png" title="Quote Icon" />
                     <p style="color: #DDCCAA">MOVIE QUOTES</p>
                 </td>
             </tr>
