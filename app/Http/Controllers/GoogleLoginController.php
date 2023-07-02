@@ -26,7 +26,6 @@ class GoogleLoginController extends Controller
 				'username'        => $user->name,
 				'email'           => $user->email,
 				'google_id'       => $user->token,
-				'profile_picture' => $user->avatar,
 				'password'        => '',
 			]);
 
