@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('comments.{userId}', function ($user, $userId) {
 	return (int)$user->id === (int)$userId;
 });
+Broadcast::channel('likes.{userId}', function ($user, $userId) {
+	return (int)$user->id === (int)$userId;
+});
