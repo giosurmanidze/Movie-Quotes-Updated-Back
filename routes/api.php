@@ -8,8 +8,12 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\MovieController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+Broadcast::routes();
 
 Route::middleware('auth:sanctum')->group(function () {
 	Route::get('/user', [AuthController::class, 'getUser']);
@@ -42,6 +46,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
 	Route::post('likes', [LikeController::class, 'store'])->name('like.store');
 	Route::delete('likes/{like}', [LikeController::class, 'destroy'])->name('like.destroy');
+
+	Route::controller(NotificationController::class)->group(function () {
+		Route::get('get-notifications', 'index')->name('notifications.index');
+		Route::post('mark-read', 'markAsRead')->name('notification.mark');
+	});
 });
 
 Route::controller(AuthController::class)->group(function () {
