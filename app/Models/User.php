@@ -25,13 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 *
 	 * @var array<int, string>
 	 */
-	protected $fillable = [
-		'username',
-		'email',
-		'password',
-		'google_id',
-		'profile_picture',
-	];
+	protected $guarded = ['id'];
 
 	public $remember_token = false;
 
@@ -58,6 +52,11 @@ class User extends Authenticatable implements MustVerifyEmail
 	public function sendPasswordResetNotification($token)
 	{
 		$this->notify(new ResetPassword($token));
+	}
+
+	public function notifications(): HasMany
+	{
+		return $this->hasMany(Notification::class);
 	}
 
 	/**
