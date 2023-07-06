@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
 		Route::post('quotes/{quote}', 'update')->name('quotes.update');
 		Route::post('quotes-refresh', 'index')->name('quotes.refresh');
 		Route::delete('quotes/{quote}', 'destroy')->name('quotes.destroy');
+		Route::get('quote-search', 'searchPost')->name('quote.search');
 	});
 
 	Route::controller(MovieController::class)->group(function () {
