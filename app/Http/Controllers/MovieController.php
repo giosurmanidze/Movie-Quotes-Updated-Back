@@ -36,6 +36,7 @@ class MovieController extends Controller
 
 		$genresIds = json_decode($request['genre'], true);
 		$movie->genres()->attach($genresIds);
+		$movie->load('quotes', 'genres');
 		return response()->json($movie);
 	}
 
@@ -81,6 +82,7 @@ class MovieController extends Controller
 
 		$movie->genres()->sync($genresIds);
 		$movie->update($attributes);
+		$movie->load('quotes', 'genres');
 		return response()->json($movie);
 	}
 
