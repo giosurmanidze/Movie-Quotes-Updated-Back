@@ -6,16 +6,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SearchQuoteRequest extends FormRequest
 {
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
-     */
-    public function rules(): array
-    {
-        return [
-           'search' => ['required']
-        ];
-    }
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+	 */
+	public function rules(): array
+	{
+		return [
+			'search' => ['required', 'string'],
+		];
+	}
 }
