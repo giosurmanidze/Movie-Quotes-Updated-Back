@@ -12,24 +12,28 @@ class GenreSeeder extends Seeder
 	 */
 	public function run(): void
 	{
-		$genres = [
-			['en' => 'Horror', 'ka' => 'საშინელებათა ფილმი'],
-			['en' => 'Fantasy', 'ka' => 'ფენტეზი'],
-			['en' => 'Comedy', 'ka' => 'კომედია'],
-			['en' => 'Drama', 'ka' => 'დრამა'],
-			['en' => 'Mystery', 'ka' => 'მისტიკა'],
-			['en' => 'Romance', 'ka' => 'რომანტიკა'],
-			['en' => 'Thriller', 'ka' => 'თრილერი'],
-			['en' => 'Western', 'ka' => 'ვესტერნი'],
-		];
-
-		$records = [];
-		foreach ($genres as $genre) {
-			$records[] = [
-				'genre' => json_encode($genre),
-			];
-		}
-
-		DB::table('genres')->insert($records);
+		DB::table('genres')->insert([
+			[
+				'genre' => json_encode(['en' => 'Fantasy', 'ka' => 'ფენტეზი']),
+			],
+			[
+				'genre' => json_encode(['en' => 'Comedy', 'ka' => 'კომედია']),
+			],
+			[
+				'genre' => json_encode(['en' => 'Drama', 'ka' => 'დრამა']),
+			],
+			[
+				'genre' => json_encode(['en' => 'Horror', 'ka' => 'საშინელებათა ფილმი']),
+			],
+			[
+				'genre' => json_encode(['en' => 'Mystery', 'ka' => 'მისტიკა']),
+			],
+			[
+				'genre' => json_encode(['en' => 'Romance', 'ka' => 'რომანტიკა']),
+			],
+			[
+				'genre' => json_encode(['en' => 'Thriller', 'ka' => 'თრილერი']),
+			],
+		]);
 	}
 }
