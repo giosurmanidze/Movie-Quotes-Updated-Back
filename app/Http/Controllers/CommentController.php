@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\CommentedQuote;
+use App\Events\CommentEvent;
+use App\Events\NotificationEvent;
 use App\Http\Requests\AddCommentRequest;
 use App\Models\Comment;
 use App\Models\Notification;
@@ -11,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 
 class CommentController extends Controller
 {
-    public function store(AddCommentRequest $request): JsonResponse
+	public function store(AddCommentRequest $request): JsonResponse
 	{
 		$attributes = [
 			'quote_id' => $request['quote_id'],
@@ -28,16 +29,18 @@ class CommentController extends Controller
 
 		$quoteAuthorId = $quote->user_id;
 
-		if (auth()->user()->id !== $quoteAuthorId)
-		{
+		if (auth()->user()->id !== $quoteAuthorId) {
 			$notification = new Notification();
 			$notification->from = auth()->user()->id;
 			$notification->to = $quoteAuthorId;
 			$notification->type = 'comment';
 			$notification->save();
-			event((new CommentedQuote($notification->load('sender'))));
+			event(new NotificationEvent($request->all()));
 		}
 
-		return response()->json($comment);
+		event(new CommentEvent($request->body));
+		$comment->save();
+
+		return response()->json(['message' => 'Post commented successfully'], 201);
 	}
 }
