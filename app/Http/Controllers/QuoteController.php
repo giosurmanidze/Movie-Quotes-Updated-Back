@@ -4,11 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddQuotesRequest;
 use App\Http\Requests\EditQuoteRequest;
-use App\Http\Requests\SearchQuoteRequest;
+use App\Http\Requests\SearchRequest;
 use App\Http\Resources\QuotePostResource;
 use App\Models\Quote;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class QuoteController extends Controller
 {
@@ -66,37 +65,14 @@ class QuoteController extends Controller
 		return response()->json('Quote deleted successfully');
 	}
 
-	public function searchPost(SearchQuoteRequest $request): JsonResponse
-{
-    $search = $request->search;
-    $query = Quote::with('movie');
+	public function searchPost(SearchRequest $request): JsonResponse
+	{
+		$quote = QuotePostResource::collection(
+			Quote::with(['movie'])
+				->filter(strtolower($request->search))
+				->get()
+		);
 
-    if (strpos($search, '@') === 0) {
-        $search = ltrim($search, '@');
-        $query->whereHas('movie', function ($movie) use ($search) {
-            $movie->where(DB::raw('lower(name)'), 'LIKE', '%' . strtolower($search) . '%')
-                  ->orWhere('name->ka', 'LIKE', "%{$search}%");
-        });
-    } elseif (strpos($search, '#') === 0) {
-        $search = ltrim($search, '#');
-        $query->where(function ($query) use ($search) {
-            $query->where(DB::raw('lower(quote)'), 'LIKE', '%' . strtolower($search) . '%')
-                  ->orWhere('quote->ka', 'LIKE', "%{$search}%");
-        });
-    } else {
-        $query->where(function ($query) use ($search) {
-            $query->where(function ($subQuery) use ($search) {
-                $subQuery->where(DB::raw('lower(name)'), 'LIKE', '%' . strtolower($search) . '%')
-                         ->orWhere('name->ka', 'LIKE', "%{$search}%");
-            })
-            ->orWhere(function ($subQuery) use ($search) {
-                $subQuery->where(DB::raw('lower(quote)'), 'LIKE', '%' . strtolower($search) . '%')
-                         ->orWhere('quote->ka', 'LIKE', "%{$search}%");
-            });
-        });
-    }
-    $quote = QuotePostResource::collection($query->orderByDesc('id')->get());
-    return response()->json($quote, 200);
-}
-
+		return response()->json($quote, 200);
+	}
 }
