@@ -28,8 +28,7 @@ class NotificationController extends Controller
 			->where('to', auth()->id())
 			->with('sender')
 			->get();
-	
+
 		return response()->json($allNotifications, 200);
 	}
-	
 }

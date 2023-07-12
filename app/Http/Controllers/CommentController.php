@@ -19,7 +19,7 @@ class CommentController extends Controller
 			'body'     => $request['body'],
 		];
 
-		$attributes['user_id'] = auth()->user()->id;
+		$attributes['user_id'] = auth()->id();
 		$attributes['username'] = auth()->user()->username;
 		$attributes['thumbnail'] = auth()->user()->thumbnail;
 
@@ -29,9 +29,9 @@ class CommentController extends Controller
 
 		$quoteAuthorId = $quote->user_id;
 
-		if (auth()->user()->id !== $quoteAuthorId) {
+		if (auth()->id() !== $quoteAuthorId) {
 			$notification = new Notification();
-			$notification->from = auth()->user()->id;
+			$notification->from = auth()->id();
 			$notification->to = $quoteAuthorId;
 			$notification->type = 'comment';
 			$notification->save();

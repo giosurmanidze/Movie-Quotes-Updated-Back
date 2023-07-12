@@ -24,9 +24,9 @@ class LikeController extends Controller
 		$quote = Quote::where('id', $request['quote_id'])->first();
 		$quoteAuthorId = $quote->user_id;
 
-		if (auth()->user()->id !== $quoteAuthorId) {
+		if (auth()->id() !== $quoteAuthorId) {
 			$notification = new Notification();
-			$notification->from = auth()->user()->id;
+			$notification->from = auth()->id();
 			$notification->to = $quoteAuthorId;
 			$notification->type = 'like';
 			$notification->save();

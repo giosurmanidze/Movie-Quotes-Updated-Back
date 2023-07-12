@@ -26,7 +26,7 @@ class QuoteController extends Controller
 			],
 			'movie_id'     => $request['movie_id'],
 			'thumbnail'    => $request['thumbnail'] = $request->file('thumbnail')->store('thumbnails', 'public'),
-			'user_id'      => auth()->user()->id,
+			'user_id'      => auth()->id(),
 		];
 
 		$quote = Quote::create($attributes);
