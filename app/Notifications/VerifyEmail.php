@@ -12,11 +12,11 @@ class VerifyEmail extends VerifyEmailBase
 	{
 		$url = $this->verificationUrl($notifiable);
 		return (new MailMessage())
-			->subject(Lang::get(__('email.email-verification-subject')))
+			->subject(('Email verification'))
 			->view(
 				'email.email-verification',
 				['url'  => $url,
-					'name' => $notifiable->name]
+					'name' => $notifiable->username]
 			);
 	}
 }

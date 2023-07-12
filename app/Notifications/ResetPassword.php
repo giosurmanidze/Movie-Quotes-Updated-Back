@@ -18,7 +18,7 @@ class ResetPassword extends ResetPasswordBase
 		->view(
 			'email.reset-message',
 			['url'  => $url,
-				'name' => $notifiable->name]
+				'name' => $notifiable->username]
 		);
 	}
 }

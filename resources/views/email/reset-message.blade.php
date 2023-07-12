@@ -43,7 +43,7 @@
             </tr>
             <br />
             <tr>
-                <td>
+                <td style="color: #DDCCAA"> 
                     {{ $url }}
                 </td>
             </tr>
