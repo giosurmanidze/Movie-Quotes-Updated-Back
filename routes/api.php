@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Broadcast::routes();
 
 Route::middleware('auth:sanctum')->group(function () {
-	Route::get('/user', [AuthController::class, 'getUser']);
+	Route::get('/user', [AuthController::class, 'getUser'])->name('getUsers');
 
 	Route::controller(QuoteController::class)->group(function () {
 		Route::post('quotes', 'store')->name('quotes.store');

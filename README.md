@@ -65,6 +65,12 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+7\. link storage folder to public folder:
+
+```sh
+php artisan storage:link
+```
+
 And now you should provide **.env** file all the necessary environment variables:
 
 #

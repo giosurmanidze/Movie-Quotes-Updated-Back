@@ -15,7 +15,8 @@ class UserController extends Controller
 {
 	public function update(UpdateUserRequest $request): JsonResponse
 	{
-		$user = User::find(auth()->id());
+		/** @var User $user */
+		$user = auth()->user();
 
 		$attributes = [];
 
