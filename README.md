@@ -182,4 +182,4 @@ Database structure in DrawSQL:
 https://drawsql.app/teams/redberry-35/diagrams/movie-quotes-epic
 </a>
 
-<img src="https://i.postimg.cc/5ycvDRzf/draw-SQL-movie-quotes-epic-export-2023-07-07.png"  />
+<img src="https://i.postimg.cc/sg7mfxc5/f.png"  />
