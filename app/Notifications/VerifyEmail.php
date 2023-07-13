@@ -9,7 +9,8 @@ class VerifyEmail extends VerifyEmailBase
 {
 	public function toMail($notifiable): MailMessage
 	{
-		$url = $this->verificationUrl($notifiable);
+		$url = env('FRONT_BASE_URL') . '/success?email=' . urlencode($notifiable->email);
+
 		return (new MailMessage())
 			->subject(('Email verification'))
 			->view(
