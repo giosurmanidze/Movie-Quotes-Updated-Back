@@ -53,18 +53,16 @@ class AuthController extends Controller
 			$credentials['username'] = $username;
 		}
 
-		return Auth::guard('web')->attempt($credentials) ?
-			(
-				auth()->user()->email_verified_at ?
-				response()->json('success!') :
-				auth()->logout() && back()->withInput($request->only('username'))->withErrors([
-					'username' => trans('email_not_verified'),
-				])
-			) :
-			back()->withInput($request->only('username'))->withErrors([
-				'password' => trans('user_password_incorrect'),
+		return Auth::guard('web')->attempt($credentials)
+			? (auth()->user()->email_verified_at
+				? response()->json('success!')
+				: (auth()->logout() && response()->json([
+					'error' => trans('email_not_verified'),
+				], 401)))
+			: response()->json([
+				'error'    => trans('user_password_incorrect'),
 				'username' => trans('is_incorrect_input'),
-			]);
+			], 401);
 	}
 
 	public function getUser(Request $request)

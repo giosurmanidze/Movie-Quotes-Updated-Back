@@ -19,19 +19,18 @@ class CommentController extends Controller
 			'body'     => $request['body'],
 		];
 
-		$attributes['user_id'] = auth()->id();
-		$attributes['username'] = auth()->user()->username;
-		$attributes['thumbnail'] = auth()->user()->thumbnail;
+		$user = auth()->user();
 
-		$comment = Comment::create($attributes);
+		$comment = new Comment($attributes);
+		$comment->user()->associate($user);
+		$comment->save();
 
 		$quote = Quote::where('id', $request['quote_id'])->first();
-
 		$quoteAuthorId = $quote->user_id;
 
-		if (auth()->id() !== $quoteAuthorId) {
+		if ($user->id !== $quoteAuthorId) {
 			$notification = new Notification();
-			$notification->from = auth()->id();
+			$notification->from = $user->id;
 			$notification->to = $quoteAuthorId;
 			$notification->type = 'comment';
 			$notification->save();
@@ -39,7 +38,6 @@ class CommentController extends Controller
 		}
 
 		event(new CommentEvent($request->body));
-		$comment->save();
 
 		return response()->json(['message' => 'Post commented successfully'], 201);
 	}
