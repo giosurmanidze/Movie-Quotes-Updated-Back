@@ -15,8 +15,6 @@ class UserController extends Controller
 {
 	public function update(UpdateUserRequest $request): JsonResponse
 	{
-		$user = User::find(auth()->id());
-
 		$attributes = [];
 
 		if (isset($request['username'])) {
@@ -24,8 +22,8 @@ class UserController extends Controller
 		}
 
 		if ($request->hasFile('thumbnail')) {
-			if ($user->profile_picture) {
-				Storage::delete($user->profile_picture);
+			if (auth()->user()->profile_picture) {
+				Storage::delete(auth()->user()->profile_picture);
 			}
 			$attributes['profile_picture'] = $request->file('thumbnail')->store('thumbnails');
 		}
@@ -34,8 +32,8 @@ class UserController extends Controller
 			$attributes['password'] = $request['password'];
 		}
 
-		$user->fill($attributes);
-		$user->save();
+		auth()->user()->fill($attributes);
+		auth()->user()->save();
 
 		return response()->json('success');
 	}

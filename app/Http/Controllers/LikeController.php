@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\LikedQuote;
+use App\Events\LikeEvent;
+use App\Events\NotificationEvent;
 use App\Http\Requests\LikeQuoteRequest;
 use App\Models\Like;
 use App\Models\Notification;
@@ -23,14 +24,15 @@ class LikeController extends Controller
 		$quote = Quote::where('id', $request['quote_id'])->first();
 		$quoteAuthorId = $quote->user_id;
 
-		if (auth()->user()->id !== $quoteAuthorId) {
+		if (auth()->id() !== $quoteAuthorId) {
 			$notification = new Notification();
-			$notification->from = auth()->user()->id;
+			$notification->from = auth()->id();
 			$notification->to = $quoteAuthorId;
 			$notification->type = 'like';
 			$notification->save();
-			event((new LikedQuote($notification->load('sender'))));
+			event(new NotificationEvent($request->all()));
 		}
+		event(new LikeEvent($request->all()));
 
 		return response()->json(['message' => 'Post liked successfully', 'like_id' => $like->id], 201);
 	}

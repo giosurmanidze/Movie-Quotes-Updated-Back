@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AddMoviesRequest;
 use App\Http\Requests\EditMoviesRequest;
+use App\Http\Requests\ShowMovieRequest;
 use App\Http\Resources\MovieResource;
 use App\Models\Movie;
 use Illuminate\Http\JsonResponse;
@@ -46,12 +47,8 @@ class MovieController extends Controller
 		return response()->json($movie, 200);
 	}
 
-	public function show(Movie $movie): JsonResponse
+	public function show(ShowMovieRequest $request, Movie $movie): JsonResponse
 	{
-		if ($movie->user_id !== auth()->id()) {
-			return response()->json(['message' => 'Not Authorized'], 401);
-		}
-
 		return response()->json(MovieResource::make($movie), 200);
 	}
 

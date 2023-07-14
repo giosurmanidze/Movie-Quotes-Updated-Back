@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Quote extends Model
 {
@@ -45,5 +46,30 @@ class Quote extends Model
 			get: fn ($value) => json_decode($value, true),
 			set: fn ($value) => json_encode($value),
 		);
+	}
+
+	public function scopeFilter($query, $search)
+	{
+		return $query->where(function ($query) use ($search) {
+			if (strpos($search, '@') === 0) {
+				$search = ltrim($search, $search[0]);
+				$query->whereHas('movie', function ($movie) use ($search) {
+					$movie->where(DB::raw('lower(name)'), 'LIKE', '%' . strtolower($search) . '%')
+						->orWhere('name->ka', 'LIKE', "%{$search}%");
+				});
+			} elseif (strpos($search, '#') === 0) {
+				$search = ltrim($search, $search[0]);
+				$query->where(DB::raw('lower(quote)'), 'LIKE', '%' . strtolower($search) . '%')
+					->orWhere('quote->ka', 'LIKE', "%{$search}%");
+			} else {
+				$query->whereHas('movie', function ($movie) use ($search) {
+					$movie->where(DB::raw('lower(name)'), 'LIKE', '%' . strtolower($search) . '%')
+						->orWhere('name->ka', 'LIKE', "%{$search}%");
+				})
+				->orWhere(DB::raw('lower(quote)'), 'LIKE', '%' . strtolower($search) . '%')
+				->orWhere('quote->ka', 'LIKE', "%{$search}%");
+			}
+		})
+		->orderByDesc('id');
 	}
 }

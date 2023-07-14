@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\CommentedQuote;
+use App\Events\CommentEvent;
+use App\Events\NotificationEvent;
 use App\Http\Requests\AddCommentRequest;
 use App\Models\Comment;
 use App\Models\Notification;
@@ -11,33 +12,33 @@ use Illuminate\Http\JsonResponse;
 
 class CommentController extends Controller
 {
-    public function store(AddCommentRequest $request): JsonResponse
+	public function store(AddCommentRequest $request): JsonResponse
 	{
 		$attributes = [
 			'quote_id' => $request['quote_id'],
 			'body'     => $request['body'],
 		];
 
-		$attributes['user_id'] = auth()->user()->id;
-		$attributes['username'] = auth()->user()->username;
-		$attributes['thumbnail'] = auth()->user()->thumbnail;
+		$user = auth()->user();
 
-		$comment = Comment::create($attributes);
+		$comment = new Comment($attributes);
+		$comment->user()->associate($user);
+		$comment->save();
 
 		$quote = Quote::where('id', $request['quote_id'])->first();
-
 		$quoteAuthorId = $quote->user_id;
 
-		if (auth()->user()->id !== $quoteAuthorId)
-		{
+		if ($user->id !== $quoteAuthorId) {
 			$notification = new Notification();
-			$notification->from = auth()->user()->id;
+			$notification->from = $user->id;
 			$notification->to = $quoteAuthorId;
 			$notification->type = 'comment';
 			$notification->save();
-			event((new CommentedQuote($notification->load('sender'))));
+			event(new NotificationEvent($request->all()));
 		}
 
-		return response()->json($comment);
+		event(new CommentEvent($request->body));
+
+		return response()->json(['message' => 'Post commented successfully'], 201);
 	}
 }

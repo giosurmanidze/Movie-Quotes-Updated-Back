@@ -13,9 +13,15 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('comments.{userId}', function ($user, $userId) {
-	return (int)$user->id === (int)$userId;
+Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
 });
-Broadcast::channel('likes.{userId}', function ($user, $userId) {
-	return (int)$user->id === (int)$userId;
+
+
+Broadcast::channel('comment-channel', function () {
+    return true;
+});
+
+Broadcast::channel('notification-channel.{id}', function ($user, $id) {
+    return (int) auth()->user()->id === (int) $id;
 });
