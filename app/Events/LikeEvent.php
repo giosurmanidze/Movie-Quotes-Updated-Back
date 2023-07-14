@@ -11,27 +11,30 @@ use Illuminate\Queue\SerializesModels;
 class LikeEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    /**
-     * Create a new event instance.
-     *
-     * @return void
-     */
-    public function __construct($like)
-    {
-    }
+    
+	public $like;
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new Channel('like-channel');
-    }
+	/**
+	 * Create a new event instance.
+	 *
+	 * @return void
+	 */
+	public function __construct($like)
+	{
+	}
 
-    public function broadcastAs()
-    {
-        return 'new-like';
-    }
+	/**
+	 * Get the channels the event should broadcast on.
+	 *
+	 * @return \Illuminate\Broadcasting\Channel|array
+	 */
+	public function broadcastOn()
+	{
+		return new Channel('like-channel');
+	}
+
+	public function broadcastAs()
+	{
+		return 'new-like';
+	}
 }
