@@ -14,7 +14,7 @@ class Genre extends Model
 
 	public $translatable = ['genre'];
 
-	protected $guarded = [];
+	protected $guarded = ['id'];
 
 	public function movies()
 	{

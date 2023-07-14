@@ -9,8 +9,6 @@ class ResetPassword extends ResetPasswordBase
 {
 	public function toMail($notifiable): MailMessage
 	{
-		$url = $this->resetUrl($notifiable);
-
 		$url = env('FRONT_BASE_URL') . '/reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->email);
 
 		return (new MailMessage())
@@ -18,7 +16,7 @@ class ResetPassword extends ResetPasswordBase
 		->view(
 			'email.reset-message',
 			['url'  => $url,
-				'name' => $notifiable->name]
+				'name' => $notifiable->username]
 		);
 	}
 }

@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\VerifyEmailRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,19 +21,16 @@ class AuthController extends Controller
 		return response()->json(['msg' => 'success registered!']);
 	}
 
-	public function verify(Request $request): RedirectResponse
+	public function verify(VerifyEmailRequest $request): JsonResponse
 	{
-		$user = User::findOrFail($request->route('id'));
-		if (!$user->hasVerifiedEmail()) {
-			if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
-				throw new AuthorizationException();
-			}
+		$user = User::where('email', $request->email)->firstOrFail();
 
+		if (!$user->hasVerifiedEmail()) {
 			$user->markEmailAsVerified();
 			event(new Verified($user));
 		}
 
-		return redirect(env('FRONT_BASE_URL') . '/success');
+		return response()->json(['message' => 'Success verified']);
 	}
 
 	public function login(LoginRequest $request): JsonResponse
@@ -53,18 +49,16 @@ class AuthController extends Controller
 			$credentials['username'] = $username;
 		}
 
-		return Auth::guard('web')->attempt($credentials) ?
-			(
-				auth()->user()->email_verified_at ?
-				response()->json('success!') :
-				auth()->logout() && back()->withInput($request->only('username'))->withErrors([
-					'username' => trans('email_not_verified'),
-				])
-			) :
-			back()->withInput($request->only('username'))->withErrors([
-				'password' => trans('user_password_incorrect'),
+		return Auth::guard('web')->attempt($credentials)
+			? (auth()->user()->email_verified_at
+				? response()->json('success!')
+				: (auth()->logout() && response()->json([
+					'error' => trans('email_not_verified'),
+				], 401)))
+			: response()->json([
+				'error'    => trans('user_password_incorrect'),
 				'username' => trans('is_incorrect_input'),
-			]);
+			], 401);
 	}
 
 	public function getUser(Request $request)
@@ -75,7 +69,6 @@ class AuthController extends Controller
 	public function logout(Request $request)
 	{
 		$request->session()->invalidate();
-		$request->session()->regenerateToken();
 		Auth::guard('web')->logout();
 
 		return response()->json(['message' => 'You are logged out']);
