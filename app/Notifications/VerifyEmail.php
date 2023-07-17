@@ -12,7 +12,7 @@ class VerifyEmail extends VerifyEmailBase
 		$url = env('FRONT_BASE_URL') . '/success?email=' . urlencode($notifiable->email);
 
 		return (new MailMessage())
-			->subject(('Email verification'))
+			->subject(('Please verify your email address'))
 			->view(
 				'email.email-verification',
 				['url'  => $url,
